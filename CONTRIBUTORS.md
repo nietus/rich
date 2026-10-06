@@ -101,3 +101,5 @@ The following people have contributed to the development of Rich:
 - [Alex Zheng](https://github.com/alexzheng111)
 - [Sebastian Speitel](https://github.com/SebastianSpeitel)
 - [Kevin Turcios](https://github.com/KRRT7)
+
+- [nietus](https://github.com/nietus)

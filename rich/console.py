@@ -31,6 +31,11 @@ from typing import (
     runtime_checkable,
 )
 
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
+
 from rich._null_file import NULL_FILE
 
 from . import errors, themes
@@ -64,6 +69,8 @@ if TYPE_CHECKING:
 JUPYTER_DEFAULT_COLUMNS = 115
 JUPYTER_DEFAULT_LINES = 100
 WINDOWS = sys.platform == "win32"
+
+P = ParamSpec("P")
 
 HighlighterType = Callable[[Union[str, "Text"]], "Text"]
 JustifyMethod = Literal["default", "left", "center", "right", "full"]
@@ -480,7 +487,9 @@ class Group:
         yield from self.renderables
 
 
-def group(fit: bool = True) -> Callable[..., Callable[..., Group]]:
+def group(
+    fit: bool = True,
+) -> Callable[[Callable[P, Iterable[RenderableType]]], Callable[P, Group]]:
     """A decorator that turns an iterable of renderables in to a group.
 
     Args:
@@ -488,12 +497,12 @@ def group(fit: bool = True) -> Callable[..., Callable[..., Group]]:
     """
 
     def decorator(
-        method: Callable[..., Iterable[RenderableType]],
-    ) -> Callable[..., Group]:
+        method: Callable[P, Iterable[RenderableType]],
+    ) -> Callable[P, Group]:
         """Convert a method that returns an iterable of renderables in to a Group."""
 
         @wraps(method)
-        def _replace(*args: Any, **kwargs: Any) -> Group:
+        def _replace(*args: P.args, **kwargs: P.kwargs) -> Group:
             renderables = method(*args, **kwargs)
             return Group(*renderables, fit=fit)
 

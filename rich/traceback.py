@@ -36,6 +36,7 @@ from .console import (
     OverflowMethod,
     Group,
     RenderResult,
+    RenderableType,
     group,
 )
 from .constrain import Constrain
@@ -655,7 +656,7 @@ class Traceback:
         highlighter = ReprHighlighter()
 
         @group()
-        def render_stack(stack: Stack, last: bool) -> RenderResult:
+        def render_stack(stack: Stack, last: bool) -> Iterable[RenderableType]:
             if stack.frames:
                 stack_renderable: ConsoleRenderable = Panel(
                     self._render_stack(stack),
@@ -726,7 +727,9 @@ class Traceback:
             yield render_stack(stack, last)
 
     @group()
-    def _render_syntax_error(self, syntax_error: _SyntaxError) -> RenderResult:
+    def _render_syntax_error(
+        self, syntax_error: _SyntaxError
+    ) -> Iterable[RenderableType]:
         highlighter = ReprHighlighter()
         path_highlighter = PathHighlighter()
         if syntax_error.filename != "<stdin>":
@@ -765,7 +768,7 @@ class Traceback:
             return "text"
 
     @group()
-    def _render_stack(self, stack: Stack) -> RenderResult:
+    def _render_stack(self, stack: Stack) -> Iterable[RenderableType]:
         path_highlighter = PathHighlighter()
         theme = self.theme
 
